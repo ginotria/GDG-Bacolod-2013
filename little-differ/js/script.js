@@ -2,9 +2,48 @@ console.log('Hello bacolod');
 
 var Drawer = Marionette.View.extend({
     className: 'drawer show',
-    template: '#tpl-drawer'
+    initialize: function() {
+        this.file = {
+            repo: '',
+            path: '',
+            branch: '',
+            file_name: ''
+
+        };
+        this.commits = new Backbone.Collection();
+
+        _.bindAll(this, 'onCommitsAdd');
+        this.commits.bind('add', this.onCommitsAdd);
+    },
+    onCommitsAdd: function(commit) {
+        commit.set('parent_sha', this.file.branch);
+        commit.set('curr_file', this.file.path);
+    },
+    getFileDetails: function() {
+        // get file details
+        var url =  window.location.href, file = {};
+        file.repo = $('#js-command-bar-field').data().repo;
+        file.path = url.split('blob/')[1].substr(url.split('blob/')[1].indexOf('/') + 1);
+        file.branch = url.split('blob/')[1].substr(0, url.split('blob/')[1].indexOf('/'));
+        file.file_name = $('.final-path').text();
+        console.log('file', file);
+        return file;
+
+    },
+    loadHistory: function() {
+        this.file = this.getFileDetails();
+        this.commits.reset();
+        this.commits.url = 'https://api.github.com/repos/' + this.file.repo + '/commits';
+        this.commits.fetch({
+            data: {
+                path: this.file.path,
+                sha: this.file.branch
+            }
+        });
+    }
 });
 var Extension = {
+    TEMPLATES: {},
     init: function() {
         var self = this;
         this.loadHandlebarsTemplates(function() {
@@ -42,11 +81,13 @@ var Extension = {
         if (url.indexOf('/blob/') > -1 ) {
             // we're on a file view page
             $('body').append(this.drawer.$el);
+            this.drawer.loadHistory();
         } else {
             this.drawer.remove();
         }
     },
 };
+
 
 // receiver of messages from the background page
 function onMessage(msg) {
@@ -57,3 +98,4 @@ function onMessage(msg) {
 }
 
 Extension.init();
+
