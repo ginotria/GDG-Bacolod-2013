@@ -1,5 +1,16 @@
+
 console.log('Hello bacolod');
 
+var CommitItemView = Marionette.ItemView.extend({
+    template: '#tpl-commit-item',
+    tagName: 'li',
+    className: "commit commit-differ commit-group-item js-navigation-item js-details-container"
+});
+var CommitListView = Marionette.CollectionView.extend({
+    tagName: 'ul',
+    className: 'commit-group',
+    itemView: CommitItemView
+});
 var Drawer = Marionette.View.extend({
     className: 'drawer show',
     initialize: function() {
@@ -11,6 +22,10 @@ var Drawer = Marionette.View.extend({
 
         };
         this.commits = new Backbone.Collection();
+        this.commitListView = new CommitListView({
+            collection: this.commits
+        });
+        this.$el.append(this.commitListView.render().$el);
 
         _.bindAll(this, 'onCommitsAdd');
         this.commits.bind('add', this.onCommitsAdd);
