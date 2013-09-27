@@ -1,0 +1,21 @@
+{
+   "name": "GDG Bacolod 2013",
+   "description": "Getting started with chrome extensions",
+   "manifest_version" : 2,
+   "version": "1",
+   "permissions": [],
+   "minimum_chrome_version": "28",
+    "content_scripts": [{
+        "matches": [
+            "http://www.inquirer.net/*"
+        ],
+        "run_at": "document_end",
+        "js": [
+            "js/vendor/jquery.js",
+            "js/script.js"
+        ]
+    }],
+   "background": {
+    "scripts": ["js/background.js"]
+   }
+}

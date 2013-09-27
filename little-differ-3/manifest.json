@@ -1,0 +1,34 @@
+{
+  "name": "Little Differ",
+  "version": "1",
+  "description": "Reading your development history, simplified.",
+  "manifest_version": 2, // from chrome version > 18
+  "permissions":    [
+    "tabs", // interact with the browser's tab system
+    "webNavigation" // receive notifications about the status of navigation requests in-flight
+  ],
+  "content_scripts": [{
+    "matches": [
+      "https://github.com/*" // load our scripts only in pages inside the github domain
+    ],
+    "run_at": "document_end",
+    "css": ["css/styles.css"], // our
+    "js": [
+      "js/vendor/jquery.js", // library to simplify JS DOM manipulation
+      "js/vendor/handlebars.js", // templating engine
+      "js/vendor/underscore.js", // utility-belt library for JavaScript
+      "js/vendor/backbone.js", // light MVC framework
+      "js/vendor/backbone.marionette.js", // composite application library for Backbone.js
+      "js/vendor/qtip2.js", // tooltip library
+      "js/utils.js", // our own utility methods
+      "js/script.js" // our own content script
+
+    ]
+  }],
+  "background": {
+    "scripts": ["js/background.js"] // ???
+  },
+  "web_accessible_resources" : [
+      "templates.html" // where we define our handlebars templates
+  ]
+}
