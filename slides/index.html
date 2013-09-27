@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Developing Google Chrome Extensions</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Developing Google Chrome Extensions</h1>
+					<p>
+						<small>Created by <a href="http://github.com/ginotria">Gino Tria</a> / <a href="http://twitter.com/ginotria">@ginotria</a></small>
+					</p>
+				</section>
+
+				<section>
+					<h2>Overcoming the limitations of web applications</h2>
+					<h3>Examples</h3>
+					<ul>
+					    <li>Hangout</li>
+					    <li>Rapportive</li>
+					    <li>Evernote</li>
+					    <li>MeasureIt</li>
+					    <li>Collabspot</li>
+					    <li>Little-differ</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Overview</h2>
+					<ul>
+						<li>Chrome extensions extends chrome capabilities</li>
+						<li>Cross platform (mac, windows, linux)</li>
+						<li>Extensions are zip files (.crx) of HTML, Javascript, CSS and assets</li>
+						<li>Access to all standard JS api's, plus the APIs in the "chrome" namespace</li>
+						<li>Packaged apps and themes are actually implemented as extensions</li>
+					</ul>
+				</section>
+				<section>
+					<h2>What Extensions can actually do?</h2>
+				</section>
+				<section>
+					<h2>Add UI in the browser</h2>
+						<ul>
+						    <li>Browser action
+						    	<ul style='list-style:none;'>
+						    	    <li>
+										<img src="img/browseraction.png">
+						    	    </li>
+						    	</ul>
+						    </li>
+						    <li>Page action
+						    	<ul style='list-style:none;'>
+						    	    <li>
+										<img src="img/pageaction.png">
+						    	    </li>
+						    	</ul>
+						    </li>
+						</ul>
+				</section>
+				<section>
+					<h2>What Extensions can actually do?</h2>
+					<ul>
+						<li>Add UI in the browser</li>
+						<li>Present UI</li>
+						<li>Change the display of the page</li>
+						<li>Override a "default" Page</li>
+					</ul>
+				</section>
+
+				<section>
+
+					<section>
+						<h2>Architecture</h2>
+						<img src="img/architecture.png">
+					</section>
+					<section>
+						<h2>Architecture</h2>
+						<ul>
+							<li>manifest.json file</li>
+							<li>Background page
+								<ul>
+								    <li>Invisible page that holds your extensions's main logic</li>
+								</ul>
+							</li>
+							<li>Options pages</li>
+							<li>Override pages</li>
+							<li>Popup</li>
+							<li>Content Scripts</li>
+							<li>APIs</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Manifest File</h2>
+								<pre><code data-trim contenteditable style="font-size: 18px; margin-top: 20px;">
+{
+   "name": "GDG Bacolod 2013",
+   "description": "Getting started with chrome extensions",
+   "manifest_version" : 2,
+   "version": "1",
+   "permissions": [],
+   "minimum_chrome_version": "28",
+    "content_scripts": [{
+        "matches": ["http://www.inquirer.net/*"],
+        "run_at": "document_end",
+        "js": ["js/script.js"]
+    }],
+   "background": {
+    "scripts": ["js/background.js"]
+   }
+}
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Content Scripts</h2>
+						<ul>
+						    <li>Used to interact with the content loaded in the browser</li>
+						    <li>Your own javascript gets injected into pages</li>
+						    <li>Javascaripts executes in the context(process) of that page</li>
+						</ul>
+					</section>
+
+					<section>
+						<h2>The CHROME.* APIs</h2>
+						<ul>
+							<li>chrome.tabs</li>
+							<li>chrome.windows</li>
+							<li>chrome.webNavigation</li>
+							<li>chrome.runtime</li>
+							<li>chrome.storage</li>
+							<li>chrome.alarms</li>
+							<li>http://goo.gl/56uehy</li>
+						</ul>
+					</section>
+					<section>
+						<h2>Security</h2>
+						<ul>
+							<li>Permissions
+								<ul>
+								    <li>bookmarks</li>
+								    <li>clipboards</li>
+								    <li>contextMenus</li>
+								    <li>geolocations</li>
+								    <li>Host-matching patterns (for interacting with pages loaded into the browser)</li>
+								</ul>
+							</li>
+						</ul>
+					</section>
+
+
+				</section>
+
+				<section>
+					<h2>Creating and running a minimum app</h2>
+				</section>
+				<section>
+
+					<section>
+						<h2>Little Differ in 5 steps</h2>
+						<ol>
+						    <li>1. Setup
+						    </li>
+						    <li>2. Display sidebar on a file view page</li>
+						    <li>3. Load the commit history of the current file</li>
+						    <li>4. Display loaded history in the sidebar</li>
+						    <li>5. Show diff view in a tooltip when a commit item is hovered</li>
+						</ol>
+					</section>
+
+					<section>
+						<h2>Step 1: Setup</h2>
+				    	<ul>
+				    	    <li>folder structure</li>
+				    	    <li>resources</li>
+				    	    <li>third party libraries</li>
+				    	    <li>configuring to load only in github.com/*</li>
+				    	    <li>using github api</li>
+				    	</ul>
+					</section>
+					<section>
+						<h2>Step 2: Display sidebar on a file view page</h2>
+				    	<ul>
+				    		<li></li>
+				    	</ul>
+					</section>
+					<section>
+						<h2>Step 3: Load the commit history of the current file</h2>
+				    	<ul>
+				    		<li></li>
+				    	</ul>
+					</section>
+					<section>
+
+						<h2>Step 4: Display loaded history in the sidebar</h2>
+				    	<ul>
+				    		<li></li>
+				    	</ul>
+					</section>
+					<section>
+						<h2>Step 5: Show diff view in a tooltip when a commit item is hovered</h2>
+				    	<ul>
+				    		<li></li>
+				    	</ul>
+					</section>
+
+
+				</section>
+				<section>
+					<h1>THE END</h1>
+					<h3>BY Gino Tria / @ginotria @collabspot</h3>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
