@@ -4,7 +4,62 @@ console.log('Hello bacolod');
 var CommitItemView = Marionette.ItemView.extend({
     template: '#tpl-commit-item',
     tagName: 'li',
-    className: "commit commit-differ commit-group-item js-navigation-item js-details-container"
+    className: "commit commit-differ commit-group-item js-navigation-item js-details-container qtip-link",
+    onRender: function() {
+        this.setTooltip();
+    },
+
+    setTooltip: function() {
+        var self = this;
+        this.$el.qtip({
+            position: {
+                my: 'center right', // Position my top left...
+                at: 'center left',
+                target: this.$el
+            },
+            content: {
+                text: function(ev) {
+                    return $(getTemplate('tpl-commit-item-tooltip', self.model.toJSON()));
+                }
+            },
+            events: {
+                visible: function (event, api) {
+                    var $content = $(api.elements.content);
+                    $content.addClass('commit-group-item js-navigation-item js-details-container');
+                    self.compareToHead(function(text) {
+                        text = diff2Html(text);
+                        $content.find('.commit-patch').html($(text));
+                    });
+                }
+            },
+            hide: {fixed: true},
+            style: {classes: 'ui-tooltip-light ui-tooltip-shadow'}
+        });
+
+    },
+    compareToHead: function(callback) {
+        var url = this.model.get('url').split('/commits')[0], _f = {}, self = this;
+        if (this.model.get('patch_diff')) {
+            if (callback) {
+                callback(this.model.get('patch_diff'));
+            }
+        } else {
+            $.get(url + '/compare/' + this.model.get('sha') + '...' +  this.model.get('parent_sha'), {
+                stamp: new Date().getTime()
+            }, function(res) {
+                _.each(res.files, function(file) {
+                    if (file.filename === self.model.get('curr_file')) {
+                        self.model.set('patch_diff', file.patch);
+                        if (callback) {
+                            callback(file.patch);
+                        }
+                        return;
+                    }
+                });
+            });
+        }
+
+    }
 });
 var CommitListView = Marionette.CollectionView.extend({
     tagName: 'ul',
